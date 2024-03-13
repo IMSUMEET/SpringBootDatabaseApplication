@@ -323,4 +323,39 @@ now we have jdbc bean available in our config and we can use this to query the d
 
 Data access object allows the seperation between service layer and persistance layer, provides modularity, ease of conversion from java object to sql code and remove potential duplicate code.
 
-## Setup DAO
+### Setup DAO
+
+create 2 packages inside main.java.com.sumeet.DatabaseApplication
+
+```bash
+dao
+    - impl
+        - AuthorDaoImpl.class
+        - BookDaoImpl.class
+    AuthorDao.interface
+    BookDao.interface
+domain
+    - Author.class
+    - Book.class
+
+```
+
+Create schema.sql inside resources folder
+
+
+Inside test create resources and application.properties to do the integration testing of h2 in memory database
+
+```bash
+    test
+      java
+      resources
+        - application.properties
+```
+ 
+run the test application that connects to h2 in memory database based on information provided under application properties inside test/resources directory
+
+
+
+
+
+
