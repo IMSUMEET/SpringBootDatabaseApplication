@@ -354,6 +354,15 @@ Inside test create resources and application.properties to do the integration te
  
 run the test application that connects to h2 in memory database based on information provided under application properties inside test/resources directory
 
+### Create DAO
+
+we have everything setup for integration tests
+
+lets do unit tests first
+
+create new file AuthorDaoImplTests to test that class.
+now we know that this class will be using jdbc template but we are writing a unit test rather than an integration tests therefore lets use mockito.
+
 
 
 
