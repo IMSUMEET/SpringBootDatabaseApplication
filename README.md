@@ -43,7 +43,7 @@ basics about spring-boot
 
 3.Presentation Layer
   - take all data given by service layer and expose that to users.
-  - eg REST API using controllers (graphql API and Websockets API)
+  - e.g. REST API using controllers (graphql API and Websockets API)
 ------
 ## Dependency Injection
 
@@ -317,7 +317,7 @@ public class DatabaseConfig {
 }
 ```
 
-now we have jdbc bean available in our config and we can use this to query the database
+now we have jdbc bean available in our config, and we can use this to query the database
 
 ### DAO
 
@@ -464,6 +464,102 @@ public class BookDaoImplTests {
 }
 
 ```
+
+### Read One
+
+#### --------- Authors ------------
+
+AuthorDaoImplTests.java
+```bash
+@Test
+public void testThatFindOneGeneratesCorrectSql(){
+    underTest.findOne(1L);
+    verify(jdbcTemplate).query(
+            "SELECT id, name, age FROM authors WHERE id = ? LIMIT 1",
+            ArgumentMatchers.<AuthorDaoImpl.AuthorRowMapper>any(),
+            eq(1L)
+    );
+
+}
+```
+
+AuthorDao.java (interface)
+```bash
+ Optional<Author> findOne(long l);
+```
+
+AuthorDaoImpl.java (class)
+```bash
+@Override
+public Optional<Author> findOne(long authorId) {
+    List<Author> results = jdbcTemplate.query(
+            "SELECT id, name, age FROM authors WHERE id = ? LIMIT 1",
+            new AuthorRowMapper(), authorId);
+
+    return results.stream().findFirst();
+}
+
+@Override
+public static class AuthorRowMapper implements RowMapper<Author> {
+
+    @Override
+    public Author mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return Author.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .age(rs.getInt("age"))
+                .build();
+    }
+}
+```
+
+#### ------- Books --------
+
+BookDaoImplTests.java
+
+```bash
+@Test
+public void testThatFindsBookGeneratesCorrectSql() {
+    underTest.find("978-1-2345-6789-0");
+    verify(jdbcTemplate).query(
+            eq("SELECT isbn, title, author FROM books WHERE id = ? LIMIT 1"),
+            ArgumentMatchers.<BookDaoImpl.BookRowMapper>any(),
+            eq("978-1-2345-6789-0")
+    );
+}
+```
+
+BookDao.java (interface)
+```bash
+Optional<Book> find(String isbn);
+```
+
+BookDaoImpl.java (class)
+```bash
+@Override
+public Optional<Book> find(String isbn) {
+    List<Book> results =  jdbcTemplate.query(
+            "SELECT isbn, title, author FROM books WHERE id = ? LIMIT 1",
+            new BookRowMapper(), isbn);
+
+    return results.stream().findFirst();
+}
+
+
+public static class BookRowMapper implements RowMapper<Book> {
+
+    @Override
+    public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return Book.builder()
+                .isbn(rs.getString("isbn"))
+                .title(rs.getString("title"))
+                .authorId(rs.getLong("authorId"))
+                .build();
+    }
+}
+```
+
+
 
 
 
