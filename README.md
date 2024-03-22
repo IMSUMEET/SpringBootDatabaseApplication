@@ -558,7 +558,144 @@ public static class BookRowMapper implements RowMapper<Book> {
     }
 }
 ```
+## Creating Integration Tests
 
+#### ----------- AUTHOR -------------
+
+### TestDataUtil class to use the author just once for testing 
+
+```bash
+package com.sumeet.DatabaseApplication;
+
+import com.sumeet.DatabaseApplication.domain.Author;
+
+public class TestDataUtil {
+    private TestDataUtil(){
+    }
+
+    public static Author createTestAuthor() {
+        return Author.builder()
+                .id(1L)
+                .name("Sumeet Suryawanshi")
+                .age(24)
+                .build();
+    }
+}
+```
+
+To get hold of underTest object inside AuthorDaoImplIntegrationTests.java class from AuthorDaoImplTests.java ... we use SpringBoot Constructor injection with the annotation of Autowired. Which is not required in the main production code since it is automatically configured.
+
+Integration Tests for AuthorDaoImplementation
+
+```bash
+@Component
+```
+annotation on AuthorDaoImpl.class to use as injection inside AuthorDaoImplIntegrationTests.java
+
+AuthorDaoImplIntegrationTests.java
+
+```bash
+package com.sumeet.DatabaseApplication.dao.impl;
+
+import com.sumeet.DatabaseApplication.TestDataUtil;
+import com.sumeet.DatabaseApplication.domain.Author;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+public class AuthorDaoImplIntegrationTests {
+
+    private AuthorDaoImpl underTest;
+
+    @Autowired
+    public AuthorDaoImplIntegrationTests(AuthorDaoImpl underTest){
+        this.underTest = underTest;
+    }
+
+    @Test
+    public void testThatAuthorCanBeCreatedAndRecalled(){
+        Author author = TestDataUtil.createTestAuthor();
+
+        underTest.create(author);
+        Optional<Author> result =  underTest.findOne(author.getId());
+
+        //  assertj
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(author);
+
+
+    }
+
+}
+
+```
+
+#### ----------- BOOK -------------
+
+```bash
+@Component
+```
+annotation on BookDaoImpl.class to use as injection inside BookDaoImplIntegrationTests.java
+
+BookDaoImplIntegrationTests.java
+
+```bash
+package com.sumeet.DatabaseApplication.dao.impl;
+
+import com.sumeet.DatabaseApplication.TestDataUtil;
+import com.sumeet.DatabaseApplication.dao.AuthorDao;
+import com.sumeet.DatabaseApplication.domain.Author;
+import com.sumeet.DatabaseApplication.domain.Book;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+public class BookDaoImplIntegrationTests {
+
+    private AuthorDao authorDao;
+    private BookDaoImpl underTest;
+
+    @Autowired
+    public BookDaoImplIntegrationTests(BookDaoImpl underTest, AuthorDao authorDao){
+        this.underTest = underTest;
+        this.authorDao = authorDao;
+    }
+
+    @Test
+    public void testThatBookCanBeCreatedAndRecalled(){
+        Author author = TestDataUtil.createTestAuthor();
+        authorDao.create(author);
+
+        Book book = TestDataUtil.createTestBook();
+        book.setAuthorId(author.getId());
+
+        underTest.create(book);
+        Optional<Book> result =  underTest.find(book.getIsbn());
+
+        //  assertj
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEqualTo(book);
+
+    }
+}
+```
+
+AuthorDao was needed just to create a foreign key for the Books table
 
 
 

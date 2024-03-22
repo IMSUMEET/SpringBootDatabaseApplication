@@ -1,6 +1,6 @@
 package com.sumeet.DatabaseApplication.dao.impl;
 
-import com.sumeet.DatabaseApplication.dao.impl.AuthorDaoImpl;
+import com.sumeet.DatabaseApplication.TestDataUtil;
 import com.sumeet.DatabaseApplication.domain.Author;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,10 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-
-//import static org.mockito.ArgumentMatchers.any;
-import static org.hamcrest.Matchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -29,11 +25,7 @@ public class AuthorDaoImplTests {
     @Test
     public void testThatCreateAuthorGeneratesCorrectSql(){
 //      Creating author with values then using
-        Author author = Author.builder()
-                .id(1L)
-                .name("Sumeet Suryawanshi")
-                .age(24)
-                .build();
+        Author author = TestDataUtil.createTestAuthor();
 
 //      .create to insert into database
         underTest.create(author);
