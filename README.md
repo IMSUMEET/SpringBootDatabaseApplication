@@ -695,7 +695,200 @@ public class BookDaoImplIntegrationTests {
 }
 ```
 
-AuthorDao was needed just to create a foreign key for the Books table
+AuthorDao was needed in the above test file just to satisfy a foreign key constraint for the Books table
+
+###  Find Many 
+
+#### ----------- Author -------------
+
+AuthorDaoImpleTests.java
+```bash
+@Test
+public void testThatFindManyGeneratesCorrectSql(){
+    underTest.find();
+    verify(jdbcTemplate).query(
+            eq("SELECT id, name, age FROM authors"),
+            ArgumentMatchers.<AuthorDaoImpl.AuthorRowMapper>any()
+    );
+}
+```
+
+AuthorDao (interface)
+```bash
+List<Author> find();
+```
+
+AuthorDaoImpl.java
+```bash
+@Override
+public List<Author> find() {
+    return jdbcTemplate.query("SELECT id, name, age FROM authors",
+            new AuthorRowMapper()
+    );
+}
+```
+
+AuthorDaoImplIntegrationTests.java
+```bash
+@Test
+public void testThatMultipleAuthorsCanBeCreatedAndRecalled(){
+    Author authorA = TestDataUtil.createTestAuthorA();
+    underTest.create(authorA);
+    Author authorB = TestDataUtil.createTestAuthorB();
+    underTest.create(authorB);
+    Author authorC = TestDataUtil.createTestAuthorC();
+    underTest.create(authorC);
+    Author authorD = TestDataUtil.createTestAuthorD();
+    underTest.create(authorD);
+
+
+    List<Author> result = underTest.find();
+    assertThat(result)
+            .hasSize(4)
+            .containsExactly(authorA, authorB, authorC, authorD);
+}
+```
+
+#### ----------- Book -------------
+
+BookDaoImplTests.java
+```bash
+@Test
+public void testThatFindGeneratesCorrectSql(){
+    underTest.find();
+    verify(jdbcTemplate).query(
+            eq("SELECT isbn, title, author_id FROM books"),
+            ArgumentMatchers.<BookDaoImpl.BookRowMapper>any()
+    );
+}
+```
+
+BookDao (interface)
+```bash
+List<Book> find();
+```
+
+BookDaoImpl.java
+```bash
+@Override
+public List<Book> find() {
+    return jdbcTemplate.query(
+            "SELECT isbn, title, author_id FROM books",
+            new BookRowMapper()
+    );
+}
+```
+
+BookDaoImplIntegrationTests.java
+```bash
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+```
+Add above annotation above class to clean database after every test method to remove tests pollution
+
+```bash
+ @Test
+public void testThatMultipleBooksCanBeCreatedAndRecalled(){
+    Author author = TestDataUtil.createTestAuthorA();
+    authorDao.create(author);
+
+    Book bookA = TestDataUtil.createTestBookA();
+    bookA.setAuthorId(author.getId());
+    underTest.create(bookA);
+
+    Book bookB = TestDataUtil.createTestBookB();
+    bookB.setAuthorId(author.getId());
+    underTest.create(bookB);
+
+    Book bookC = TestDataUtil.createTestBookC();
+    bookC.setAuthorId(author.getId());
+    underTest.create(bookC);
+
+    Book bookD = TestDataUtil.createTestBookD();
+    bookD.setAuthorId(author.getId());
+    underTest.create(bookD);
+
+    List<Book> results = underTest.find();
+    assertThat(results).hasSize(4).containsExactly(bookA, bookB, bookC, bookD);
+}
+```
+
+TestDataUtil.java
+```bash
+package com.sumeet.DatabaseApplication;
+
+import com.sumeet.DatabaseApplication.domain.Author;
+import com.sumeet.DatabaseApplication.domain.Book;
+
+public class TestDataUtil {
+    private TestDataUtil(){
+    }
+
+    public static Author createTestAuthorA() {
+        return Author.builder()
+                .id(1L)
+                .name("Sumeet Suryawanshi")
+                .age(24)
+                .build();
+    }
+
+    public static Author createTestAuthorB() {
+        return Author.builder()
+                .id(2L)
+                .name("Akash Rana")
+                .age(29)
+                .build();
+    }
+
+    public static Author createTestAuthorC() {
+        return Author.builder()
+                .id(3L)
+                .name("Sadanand Srinivasana")
+                .age(24)
+                .build();
+    }
+
+    public static Author createTestAuthorD() {
+        return Author.builder()
+                .id(4L)
+                .name("Rohan Mathur")
+                .age(23)
+                .build();
+    }
+
+    public static Book createTestBookA() {
+        return Book.builder()
+                .isbn("978-1-2345-6789-0")
+                .title("The Shadow in the Attic")
+                .authorId(1L)
+                .build();
+    }
+
+    public static Book createTestBookB() {
+        return Book.builder()
+                .isbn("978-1-2345-6789-1")
+                .title("Beyond the horizon")
+                .authorId(1L)
+                .build();
+    }
+
+    public static Book createTestBookC() {
+        return Book.builder()
+                .isbn("978-1-2345-6789-2")
+                .title("The Last Ember")
+                .authorId(1L)
+                .build();
+    }
+
+    public static Book createTestBookD() {
+        return Book.builder()
+                .isbn("978-1-2345-6789-3")
+                .title("Atomic Habits")
+                .authorId(1L)
+                .build();
+    }
+}
+```
+
 
 
 
