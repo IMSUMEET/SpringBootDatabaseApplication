@@ -42,6 +42,13 @@ public class BookDaoImpl implements BookDao {
         );
     }
 
+    @Override
+    public void update(String isbn, Book bookA) {
+        jdbcTemplate.update("UPDATE books SET isbn = ?, title = ?, author_id = ? WHERE isbn = ?",
+                bookA.getIsbn(), bookA.getTitle(), bookA.getAuthorId(), isbn
+        );
+    }
+
 
     public static class BookRowMapper implements RowMapper<Book> {
 

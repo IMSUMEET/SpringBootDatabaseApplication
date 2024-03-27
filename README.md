@@ -464,6 +464,7 @@ public class BookDaoImplTests {
 }
 
 ```
+### READ
 
 ### Read One
 
@@ -888,6 +889,103 @@ public class TestDataUtil {
     }
 }
 ```
+
+### UPDATE
+
+#### ----------- Author -------------
+
+AuthorDao (interface)
+```bash
+void update(long id, Author author);
+```
+
+AuthorDaoImpl.java
+```bash
+@Override
+public void update(long id, Author author) {
+    jdbcTemplate.update("UPDATE authors SET id = ?, name = ?, age = ? WHERE id = ?",
+            author.getId(), author.getName(), author.getAge(), id
+    );
+
+}
+```
+
+AuthorDaoImplTests.java
+```bash
+@Test
+public void testThatUpdateGeneratesCorrectSql(){
+    Author author = TestDataUtil.createTestAuthorA();
+    underTest.update(3L, author);
+
+    verify(jdbcTemplate).update(
+            "UPDATE authors SET id = ?, name = ?, age = ? WHERE id = ?",
+            1L, "Sumeet Suryawanshi", 23, 3L
+    );
+}
+```
+
+AuthorDaoImplIntegrationTests.java
+```bash
+@Test
+public void testThatAuthorCanBeUpdated(){
+    Author authorA = TestDataUtil.createTestAuthorA();
+    underTest.create(authorA);
+    authorA.setName("UPDATED");
+    underTest.update(authorA.getId(), authorA);
+    Optional<Author> result = underTest.findOne(authorA.getId());
+    assertThat(result).isPresent();
+    assertThat(result.get()).isEqualTo(authorA);
+}
+```
+#### ----------- Book -------------
+BookDao (interface)
+```bash
+void update(String isbn, Book bookA);
+```
+
+BookDaoImpl.java
+```bash
+@Override
+public void update(String isbn, Book bookA) {
+    jdbcTemplate.update("UPDATE books SET isbn = ?, title = ?, author_id = ? WHERE isbn = ?",
+            bookA.getIsbn(), bookA.getTitle(), bookA.getAuthorId(), isbn
+    );
+}
+```
+BookDaoImplTests.java
+```bash
+@Test
+public void testThatUpdateGeneratesCorrectSql(){
+    Book bookA = TestDataUtil.createTestBookA();
+    underTest.update("978-1-2345-6789-0", bookA);
+
+    verify(jdbcTemplate).update(
+            "UPDATE books SET isbn = ?, title = ?, author_id = ? WHERE isbn = ?",
+            "978-1-2345-6789-0", "The Shadow in the Attic", 1L, "978-1-2345-6789-0"
+
+    );
+}
+```
+BookDaoImplIntegrationTests.java
+```bash
+@Test
+public void testThatBookCanBeUpdated(){
+    Author author = TestDataUtil.createTestAuthorA();
+    authorDao.create(author);
+
+    Book bookA = TestDataUtil.createTestBookA();
+    bookA.setAuthorId(author.getId());
+    underTest.create(bookA);
+
+    bookA.setTitle("UPDATED");
+    underTest.update(bookA.getIsbn(),bookA);
+
+    Optional<Book> result = underTest.find(bookA.getIsbn());
+    assertThat(result).isPresent();
+    assertThat(result.get()).isEqualTo(bookA);
+}
+```
+
 
 
 
