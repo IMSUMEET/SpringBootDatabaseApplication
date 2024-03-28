@@ -34,7 +34,7 @@ public class AuthorDaoImplTests {
                 eq("INSERT INTO authors (id, name, age) VALUES (?, ?, ?)"),
                 eq(1L),
                 eq("Sumeet Suryawanshi"),
-                eq(24)
+                eq(23)
         );
     }
 
@@ -61,11 +61,19 @@ public class AuthorDaoImplTests {
     @Test
     public void testThatUpdateGeneratesCorrectSql(){
         Author author = TestDataUtil.createTestAuthorA();
-        underTest.update(3L, author);
+        underTest.update(1L, author);
 
         verify(jdbcTemplate).update(
                 "UPDATE authors SET id = ?, name = ?, age = ? WHERE id = ?",
-                1L, "Sumeet Suryawanshi", 23, 3L
+                1L, "Sumeet Suryawanshi", 23, 1L
+        );
+    }
+
+    @Test
+    public void testThatDeleteGeneratesCorrectSql(){
+        underTest.delete(1L);
+        verify(jdbcTemplate).update("DELETE FROM authors WHERE id = ?",
+            1L
         );
     }
 }

@@ -986,6 +986,93 @@ public void testThatBookCanBeUpdated(){
 }
 ```
 
+### DELETE
+
+#### ----------- Author -------------
+
+AuthorDao (interface)
+```bash
+void delete(long id);
+```
+
+AuthorDaoImpl.java
+```bash
+@Override
+public void delete(long id) {
+    jdbcTemplate.update("DELETE FROM authors WHERE id = ?",
+            id
+    );
+}
+```
+
+AuthorDaoImplTests.java
+```bash
+@Test
+public void testThatDeleteGeneratesCorrectSql(){
+    underTest.delete(1L);
+    verify(jdbcTemplate).update("DELETE FROM authors WHERE id = ?",
+        1L
+    );
+}
+```
+AuthorDaoImplIntegrationTests.java
+```bash
+@Test 
+void testThatAuthorCanBeDeleted(){
+    Author authorA = TestDataUtil.createTestAuthorA();
+    underTest.create(authorA);
+
+    underTest.delete(authorA.getId());
+
+    Optional<Author> result = underTest.findOne(authorA.getId());
+    assertThat(result).isEmpty();
+}
+```
+
+#### ----------- Book -------------
+
+BookDao (interface)
+```bash
+void delete(String isbn);
+```
+
+BookDaoImpl.java
+```bash
+@Override
+public void delete(String isbn) {
+    jdbcTemplate.update("DELETE FROM authors WHERE isbn = ?",
+            isbn
+    );
+}
+```
+BookDaoImplTests.java
+```bash
+@Test
+public void testThatBookDeleteGeneratesCorrectSql(){
+    underTest.delete("978-1-2345-6789-0");
+    verify(jdbcTemplate).update("DELETE FROM authors WHERE isbn = ?",
+            "978-1-2345-6789-0"
+    );
+}
+```
+BookDaoImplIntegrationTests.java
+```bash
+@Test
+public void testThatBookCanBeDeleted(){
+    Author author = TestDataUtil.createTestAuthorA();
+    authorDao.create(author);
+
+    Book bookA = TestDataUtil.createTestBookA();
+    bookA.setAuthorId(author.getId());
+    underTest.create(bookA);
+
+    underTest.delete(bookA.getIsbn());
+
+    Optional<Book> result = underTest.find(bookA.getIsbn());
+
+    assertThat(result).isEmpty();
+}
+```
 
 
 
