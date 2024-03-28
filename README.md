@@ -19,17 +19,18 @@ basics about spring-boot
 
 ## Running spring boot project (2 ways)
 
+
 1.⁠ ⁠Create jar file and run using terminal
-⁠ bash
+⁠ ```bash
    ./mvnw verify
     cd target
     java -jar <filename>.jar
- ⁠
-
+ ⁠```
+ 
 2.⁠ ⁠run using spring boot run
-⁠ bash
-./mvnw spring-boot:run
- ⁠
+```bash
+   ./mvnw spring-boot:run
+```
 -----
 ## Layers
 1.Persistance Layer
