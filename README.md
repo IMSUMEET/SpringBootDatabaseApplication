@@ -19,6 +19,13 @@ basics about spring-boot
 
 ## Running spring boot project (2 ways)
 
+Before you run the application start the postgresql database using following command. Which specifies running docker file to connect to in memory postgresql database.
+
+Start [**docker deamon**]() server and run the following in terminal. 
+
+```bash
+docker-compose up
+```
 
 1.⁠ ⁠Create jar file and run using terminal
 ⁠ ```bash
