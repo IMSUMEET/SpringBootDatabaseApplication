@@ -1081,8 +1081,53 @@ public void testThatBookCanBeDeleted(){
     assertThat(result).isEmpty();
 }
 ```
+### Allure Report generation plugin
+
+### 1. Add annotation at the top of test classes
+```bash
+@DisplayName("<testClassName>")
+```
 
 
+### 2. Add inside dependencies in pom.xml
+```bash
+<dependency>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-junit4</artifactId>
+        <version>2.26.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+
+
+### 3. Add as a plugin in build tag inside pom.xml
+```bash
+<plugin>
+    <groupId>io.qameta.allure</groupId>
+    <artifactId>allure-maven</artifactId>
+    <version>2.10.0</version>
+    <configuration>
+        <resultsDirectory>${project.build.directory}/surefire-reports</resultsDirectory>
+    </configuration>
+</plugin> 
+```
+
+
+### 4. To generate reports run 
+```bash
+./mvnw clean test allure:report
+```
+this will generate tests report inside [target/site/allure-maven-plugin/index.html]()
+
+### OR
+
+### You can also generate and serve the report on server by following commands
+```bash
+./mvnw clean test allure:report
+./mvnw allure:serve
+```
 
 
 

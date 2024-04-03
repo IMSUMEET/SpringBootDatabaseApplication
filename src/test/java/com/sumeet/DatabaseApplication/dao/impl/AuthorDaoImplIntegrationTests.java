@@ -2,6 +2,7 @@ package com.sumeet.DatabaseApplication.dao.impl;
 
 import com.sumeet.DatabaseApplication.TestDataUtil;
 import com.sumeet.DatabaseApplication.domain.Author;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DisplayName("AuthorDaoImplIntegrationTests")
 public class AuthorDaoImplIntegrationTests {
 
     private AuthorDaoImpl underTest;

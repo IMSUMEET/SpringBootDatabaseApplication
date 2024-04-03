@@ -2,6 +2,7 @@ package com.sumeet.DatabaseApplication.dao.impl;
 
 import com.sumeet.DatabaseApplication.TestDataUtil;
 import com.sumeet.DatabaseApplication.domain.Book;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("BookDaoImplTests")
 public class BookDaoImplTests {
 
     @Mock

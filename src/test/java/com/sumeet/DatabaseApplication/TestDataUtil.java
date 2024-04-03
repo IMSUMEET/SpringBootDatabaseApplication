@@ -2,7 +2,9 @@ package com.sumeet.DatabaseApplication;
 
 import com.sumeet.DatabaseApplication.domain.Author;
 import com.sumeet.DatabaseApplication.domain.Book;
+import org.junit.jupiter.api.DisplayName;
 
+@DisplayName("TestDataUtil")
 public class TestDataUtil {
     private TestDataUtil(){
     }
